@@ -1,0 +1,313 @@
+body {
+	margin:0;
+	background-color: #fff;
+	-webkit-font-smoothing: antialiased;
+}
+textarea {
+	padding:10px;
+	line-height: 1.5;
+}
+.leaflet-container {
+	background: none; 
+}
+#topnav {
+	background-color: #fff;
+	height: 70px;
+	border-bottomX: 1px solid #ccc;
+	position: fixed;
+	z-index: 90000;
+
+	width:100%;
+}
+#topnav-with-side {
+	left: 56px;
+	right: 0px;
+}
+#topselectors {
+	overflow: auto;
+	padding: 20px;
+}
+#topselectors div {
+	line-height: 1;
+	float: left;
+	border: 1px solid #ccc;
+	border-radius: 12px;
+	padding: 8px 12px 8px 12px;
+	margin-left:10px;
+	cursor: pointer;
+}
+#topselectors div:hover {
+	background-color: #efefef;
+}
+#topselectors div.active {
+	border:1px solid #999;
+}
+
+@media (max-width: 768px) {
+	#topselectors div {
+		font-size: 12px;
+		padding: 4px 8px 4px 8px;
+		margin-left: 5px;
+		margin-bottom: 4px;
+	}
+}
+.padding-left {
+	padding-left: 20px;
+}
+#map {
+	overflow: auto;
+	width:100%;
+	height: 500px;
+}
+.marker-menu {
+	background: #FBFBFB;
+	width: 56px;
+	padding: 5px;
+	box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	border-right: 1px solid #ddd;
+}
+
+.marker-menu-fixed {
+	position: fixed;
+	height: 100%;
+	z-index: 9;
+}
+.marker-menu-space {
+	display:none;
+	float:left;
+	width: 56px;
+	height: 100%;
+	background-color: red;
+	z-index: 99999999;
+}
+
+.draggable-marker {
+    width: 20px;
+    cursor: pointer;
+    z-index: 999;
+}
+#showapps {
+	float:left; 
+	padding:14px 0px 10px 10px; 
+	color: #ddd;
+	cursor: pointer;
+}
+#appmenu {
+	min-height: 200px;
+}
+#sidelist {
+	background: #eee;
+	width:40%;
+	height: 500px;
+	overflow: scroll;
+	box-shadow: 6px 0 5px -2px rgba(0, 0, 0, 0.2); /* horizontal (right) offset, vertical offset, blur radius, shadow spread. */
+	z-index: 101;
+}
+
+
+.person-wrapper {
+    display: -ms-flexbox;
+    display: flex;
+    width: 100%;
+    max-width: 1280px;
+    max-width: 800px;
+    margin: 0 auto;
+    -ms-flex-direction: row;
+    flex-direction: row;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+}
+
+
+
+#grouplisttop {
+	font-size: 20px;
+	line-height: 1;
+	background-color: #bbb;
+	position: absolute;
+	right: 0;
+	left: 0;
+	padding-top: 4px;
+	padding-right: 6px;
+	z-index: 1;
+}
+#grouplisttop_space {
+	height: 30px;
+	margin-bottom: 18px;
+}
+#grouplisttop i {
+	font-size: 26px;
+	color: #fff;
+	padding: 10px 6px;
+	cursor: pointer;
+}
+#grouplist {
+	margin: 10px;
+}
+
+.person:hover .person__image{transform:scale(1.02);box-shadow:2px 2px 10px rgba(90,111,131,.25)}
+.person:hover .person__meta{opacity:1;transform:translateY(calc(100% - 30px))}
+.person__image{width:100px;height:100px;margin:46px auto;background-position:center;background-size:cover;border-radius:100%;box-shadow:2px 2px 12px rgba(90,111,131,.2);transition:.2s}
+.person__meta{position:absolute;right:0;bottom:0;left:0;z-index:-1;width:100%;max-width:180px;margin:0 auto;text-align:center;transform:translateY(calc(100% - 34px));transition:.25s ease-out}
+
+
+.person__image {
+    margin: 46px auto;
+    background-position: center;
+    background-size: cover;
+    border-radius: 100%;
+    box-shadow: 2px 2px 12px rgba(90,111,131,.2);
+}
+#grouplist .person__image {
+    width: 82px;
+    height: 82px;
+    margin-top: 10px;
+}
+.person { /* set when #grouplist resized */
+    width: 33%;
+    z-index: auto; /* Allows text box to overlap */
+    position: relative;
+    transition: all .2s ease-in-out;
+}
+.person__name {
+	font-family: HelveticaNeueLTStd-Roman,HelveticaNeue,Helvetica,sans-serif;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1;
+    margin: 10px 0px 10px 0px;
+    color: #5994A5;
+}
+.person__title {
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: none;
+    padding-left: 5px;
+    padding-right: 5px;
+    margin: 0px 0px 10px 0px;
+    color: #61696E;
+}
+.h6, h6 { /* for .person__title */
+    margin-bottom: .75rem;
+    font-family: din-2014,sans-serif;
+    font-size: .875rem;
+    font-weight: 400;
+    line-height: 1.2;
+}
+
+body .person__image { /* Applies when dragging out of scrollable grouplist */
+	margin-top: 10px;
+
+	/* messes up centering if image is smaller when dragging. 
+	Someone else might want to experiment further.
+	https://stackoverflow.com/questions/5750302/jquery-draggable-center-cursorat-vertically/16438785
+	https://stackoverflow.com/questions/34827181/make-cursor-position-in-center-for-ui-helper-in-jquery-ui-draggable-method/34830265#34830265
+	*/
+	widthX: 32px;
+    heightX: 32px;
+
+    width: 82px;
+    height: 82px;
+
+	z-index: 999999;
+	transition: none;
+	margin-bottom: 20px;
+}
+.person__image {
+	border: solid 2px #fff;
+}
+@media (min-width: 768px) {
+	.person__meta {
+	    max-width: 230px;
+	    opacity: 0;
+	    transform: translateY(0);
+	}
+}
+.person__meta {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: -1;
+    width: 100%;
+    max-width: 180px;
+    margin: 0 auto;
+    text-align: center;
+    transform: translateY(calc(100% - 34px));
+    transition: .25s ease-out;
+}
+#grouplist .person__meta {
+	background-color: rgba(255,255,255,.95);
+	z-index: 99999;
+	overflow: auto;
+}
+
+
+
+
+.topcircle {
+    background-color: #ddd;
+    border-radius: 27px;
+    height: 54px;
+    width: 54px;
+    position: relative;
+    border:1px solid #fff;
+    margin:10px;
+    cursor: pointer;
+}
+.topcircle .material-icons {
+	font-size: 32px;
+}
+.iconcircle {
+    background-color: #ddd;
+    border-radius: 24px;
+    height: 42px;
+    width: 42px;
+    position: relative;
+    border:1px solid #fff;
+    margin-top: 10px;
+    margin-bottom: 4px;
+    cursor: pointer;
+}
+.iconcircle:hover {
+	background-color: #888;
+}
+.showpeople.active {
+	background-color: purple;
+}
+.showlayers.active {
+	background-color: blue;
+}
+.showsettings.active {
+	background-color: green; /* #aaa; */
+}
+.iconcircle .material-icons, .topcircle .material-icons {
+    color: #fff;
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+#flexwrapper {
+	margin-top: 10px;
+	border-top: 1px solid #eee;
+	border-bottom: 1px solid #eee;
+	box-shadowX: 0 1px 10px rgba(0, 0, 0, 0.2);
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+    z-index: 200;
+}
+.textInput {
+	font-size: 16px;
+	min-height: 42px;
+	border-radius: 6px;
+	padding-left: 12px;
+	border: 1px solid #d9d9de;
+}
+/*
+.leaflet-marker-draggable, .draggable-marker' {
+	cursor: hand !important;
+}
+*/

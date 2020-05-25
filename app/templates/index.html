@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Avatar - Office Maps</title>
+<link rel="icon" type="image/x-icon" href="img/logo/favicon.png" />
+
+	<!--
+		Drag to map
+		https://github.com/marianadgeorgieva2/drag-and-drop-custom-marker-from-a-menu
+
+        To do - check this comment
+        https://frontendtricksandmagic.wordpress.com/2015/03/10/leflet-drag-and-drop-custom-markers-from-a-menu/
+
+		Save to object
+
+		https://stackoverflow.com/questions/36185565/leaflet-how-to-save-various-marker-position-in-db-and-load-later
+
+
+        3D
+        https://www.esri.com/arcgis-blog/products/arcgis-living-atlas/3d-gis/airbus-worlddem4ortho-in-esri-3d-elevation-services/
+
+        https://docs.wrld3d.com/eegeo.js/v0.1.765/docs/examples/adding-markers-to-a-map/
+
+
+        GRID
+        http://fulcrumapp.github.io/geojson-dashboard/
+        https://gis.stackexchange.com/questions/322996/how-to-cluster-markers-using-the-geojson-dashboard-in-leaflet-javascript
+        But use VueJS
+        https://element.bootstrap-table.com/examples/
+	-->
+
+	
+	<link rel="stylesheet" href="static/css/leaflet-0.7.3.css" />
+	
+	<!-- This newer css hides marker when it's dragged -->
+	<!--
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css" />
+	-->
+
+	<!--
+	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/themes/smoothness/jquery-ui.css" />
+-->
+
+	<!--
+	<link rel="stylesheet" type="text/css" href="css/application.min.css">
+-->
+	<link rel="stylesheet" type="text/css" href="static/css/style.css">
+    <!--link rel="stylesheet" type="text/css" href="css/dark.css" -->
+    <link rel="stylesheet" type="text/css" href="static/css/search-filters.css">
+    <link rel="stylesheet" type="text/css" href="static/css/display.css">
+
+    <script src="static/js/md5.js"></script>
+
+    <script type="text/javascript" src="static/js/d3/d3.v5.min.js"></script>
+    <script type="text/javascript" src="static/js/common/showdown.min.js"></script>
+
+    <!-- zepto doesn't support draggable -->
+    <script src="static/js/jquery/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/jquery-ui.min.js"></script>
+    <script src="static/js/jquery/jquery.ui.touch-punch.min.js"></script>
+    <script type="text/javascript" src="static/js/common/common.js"></script>
+
+    <!--
+    <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+    -->
+    <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"
+  integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg=="
+  crossorigin=""></script>
+
+  <script>
+    {% if current_user.is_authenticated %}
+        var loggedin = true;
+    {% else %}
+        var loggedin = false;
+    {% endif %}
+    $(document).ready( function() {
+        //$('#sidelist').show();
+        //$('#grouplist').html($('#teamtext').val());
+    });
+  </script>
+
+    <script src="static/js/script.js"></script>
+    <script src="static/js/display/display.js"></script>
+
+	<style>
+		h1 {
+		    font-family: "Helvetica Neue", Helvetica, "Lato", sans-serif;
+		    font-weight: 350;
+		    font-weight: 100;
+		    margin-block-start: 0em;
+		    font-size: 2em;
+		}
+        
+	</style>
+</head>
+
+<body>
+{% if current_user.is_authenticated %}
+    Hi {{ current_user.name }}!
+    <a class="button" href="/logout">Logout</a>
+{% else %}
+  <a class="button" href="/login">Google Login</a>
+{% endif %}
+ 
+
+<div class="marker-menu-fixed">
+</div>
+
+<div class="marker-menu-space">&nbsp;
+</div>
+
+<div style="overflow: auto;">
+	<div id="topnav" style="display:none">
+        
+
+        <div style="float:right">
+            
+            <div id="accountPanel" style="display:none; float:left; margin-top:20px">
+                <input id="email" class="textInput" style="min-width:250px;" placeholder="Your email" type="text" style="width: 120px; margin-top: 0px" />
+            </div>
+            <div class="topcircle showaccount" style="float:left">
+                <i class="material-icons">person</i>
+            </div>
+        </div>
+        <div id="topselectors" class="padding-left">
+            <h1 style="float:left; margin-right:10px">Office Maps</h1>
+            <div>Tech Square</div>
+            <div>Ponce</div>
+            <div>Colorado</div>
+            <div>Virginia</div>
+            <div>Kansas</div>
+            <div id="addLocation" style="display:none;font-size:22px; padding:4px 10px 6px 10px">+</div>
+        </div>
+
+    </div>
+    <div style="height:30px"></div><!-- 70px -->
+
+    <div id="appmenu" class="padding-left" style="display:none">
+        <div style="float:right">       
+            <i class="material-icons hideAppMenu">close</i>
+        </div>
+        <b>Welcome</b>
+    </div>
+
+    <div id="flexwrapper" style="display:none">
+    	
+        <div class="marker-menu">
+    
+            <div class="iconcircle showapps">
+                <a href="../tw-charts"><i class="material-icons" style="font-size: 28px">apps</i></a>
+            </div>
+
+            <div class="iconcircle showpeople active">
+                <i class="material-icons">people</i>
+            </div>
+
+            <div class="iconcircle showlayers">
+                <i class="material-icons">layers</i>
+            </div>
+
+            <div class="iconcircle showsettings">
+                <i class="material-icons">settings</i>
+            </div>
+
+        </div>
+        <div id="sidelist" style="position:relative;display:none">
+            <div id="grouplisttop" class="padding-left">
+                <div style="float:left; padding:10px; color:#fff">
+                    Our Team
+                </div>
+                <div style="float:right">
+                    
+                        <i class="material-icons">person_add</i>
+                
+                </div>
+            </div>
+            <div id="grouplisttop_space"></div>
+            <div id="grouplist" ></div>
+        </div>
+    	
+        <div id="map"></div>
+
+    </div>
+
+    
+
+<br>
+<div style="margin:0 auto; max-width: 1020px">
+
+    <!--
+    <h1>Map your office</h1>
+	<img src="img/centergy-12.jpg" style="max-width:1020px"><br>
+	-->
+    
+    <!--
+    <h1>Ponce City Market - 7th Floor</h1>
+    <div style="max-height:520px; overflow:hidden">
+	   <img src="../neighborhood/atlanta/pcm/img/PCM-floorplan.jpg"><br>
+	</div>
+    <br><br>
+    -->
+
+</div>
+    
+
+
+</div>
+</div>
+
+
+
+
+
+
+<!--
+<div style="border-bottom:1px solid #ddd; background: #ddd; padding:12px; font-family: 'Lato', sans-serif;">
+    Explore Georgia
+</div>
+-->
+
+
+<div class="sectionContent">
+
+<div style="display:none;margin-top:8px">
+    <img class="draggable-marker" style="float:left; margin-right:5px; margin-top:-6px" src="static/img/marker-icon.png" alt="marker" />
+    
+    <h1 style="float:left; margin-right:10px;">Directory</h1>
+</div>
+
+<div style="clear:both"></div>
+
+<div id="showCatPanel" style="positionX:absolute;right:5px;top:8px;color:#555;cursor:pointer;padding:10px 10px 0 0;z-index:999999;font-size:24px;display:none"> 
+    <span style="font-size: 18px;">
+    <b>Directory</b>
+    </span>
+    <!--b>&gt;</b-->
+</div>
+
+
+
+<div id="mainCats" class="menu">
+
+    <div id="hideCatPanel" style="position:absolute;right:5px;top:8px;color:#aaa;cursor:pointer;padding-right:10px;z-index:10;">&#10005;</div>
+
+
+    <!-- left column title -->
+
+    
+    <div id="catListHolder">
+        <div class="catHeader">
+            <b>Industries</b>
+        </div>
+        
+        <div class="catList" id="industryCatList">
+            <div text="">Agriculture</div>
+            <div text="">Agriculture Machinery</div>
+            <div text="">Automotive</div>
+            <div text="">Building & Construction</div>
+            <div text="">Business Services</div>
+            <div text="">Chemicals</div>
+            <div text="">E-commerce</div>
+            <div text="">Energy</div>
+            <div text="">Environmental</div>
+            <div text="">Financial Technology</div>
+            <div text="">Food & Beverage</div>
+            <div text="">Healthcare</div>
+            <div text="">Logistics</div>
+            <div text="">Manufacturing</div>
+            <div text="">Medical Devices</div>
+            <div text="">Pharmaceuticals</div>
+            <div text="">Technology</div>
+            <div text="">Textiles</div>
+        </div>
+    </div>
+
+</div>
+
+
+<!-- Common with display -->
+<div class="pagePanel" style="margin-bottom:12px">
+
+    <div style="float:left">
+        <div class="filterField keywordField">
+            
+            <div class="filterLabel filterLabelMain">Search</div>
+            <!--
+            <div style="position:absolute; right:8px; top:10px; z-index:1">
+                <i id="showAdvancedXXX" class="material-icons" style="font-size:24px;cursor:pointer">&#xE409;</i>
+                
+            </div>
+            -->
+
+            <div class="si-wrapper" style="float:left;position:relative">
+                <!-- speech input -->
+                <!-- was a button -->
+                <div class="si-btn">
+                    <span class="si-holder" style="font-size: 20px">&#127897;</span>
+                </div>
+                <!-- maxlength="400"  -->
+                <input id="keywordsTB" autocomplete="off" style="width:100%;max-width:400px;padding-right:27px" class="filterClick mobileWide textInput si-input" type="text" value="" onblurXX="SearchFormTextCheck(this, 0)" onfocusXX="SearchFormTextCheck(this, 1)" placeholderX="Search" onkeyup="return SearchEnter(event);" onkeypressX="return SearchEnter(event);" />
+            </div>
+
+        </div>
+
+
+        <div style="clear:both"></div>
+
+
+        <div class="keywordBubble">
+            <div class="fieldSelector filterBubbleHolder" style="margin-top:10px">
+                    <div class="uparrow uparrow-grey" style="left: 34px;"></div>
+                    <div class="uparrow uparrow-white" style="left: 34px;"></div>
+
+                    <div class="filterBubble">
+
+                        <div id="findWhat">
+                            <div id="hideAdvanced" style="float:right;cursor:pointer">&#10005;</div>
+
+                            <div style="display:none;float:left;margin-right:20px">
+                                <input type="checkbox" name="findLocation" id="findLocation" value="findLocation" checked><label for="findLocation" class="filterCheckboxTitle">Search Listings</label><br>
+                                <input type="checkbox" name="findNews" id="findNews" value="findNews" checked><label for="findNews" class="filterCheckboxTitle">Search Newsroom</label><br>
+                            </div>
+                            <div style="float:left;" id="findLocationWith">
+                                <div>
+                                    <input type="checkbox" name="findCompany" id="findCompany" value="1" checked><label for="findCompany" class="filterCheckboxTitle"> In Company Name</label>
+                                </div>
+                                <div>
+                                    <input type="checkbox" name="findAddress" id="findAddress" value="1" checked><label for="findAddress" class="filterCheckboxTitle"> In Website URL</label>
+                                </div>
+                                <div>
+                                    <input type="checkbox" name="findKeywords" id="findKeywords" value="1" checked><label for="findKeywords" class="filterCheckboxTitle"> In Keywords</label>
+                                </div>
+                                <div>
+                                    <input type="checkbox" name="findDetails" id="findDetails" value="1" checked><label for="findDetails" class="filterCheckboxTitle"> In Industry</label>
+                                </div>
+                                <div>
+                                    <input type="checkbox" name="findProduct" id="findProduct" value="1" checked><label for="findDetails" class="filterCheckboxTitle"> In Product Description</label>
+                                </div>
+                                <div style="display:none">
+                                    <input type="checkbox" name="findNews" id="findNews" value="1"><label for="findNews" class="filterCheckboxTitle"> In Newsroom</label>
+                                </div>
+                                <div style="display:none">
+                                    <input type="checkbox" name="findContent" id="findContent" value="1"><label for="findContent" class="filterCheckboxTitle"> In Georgia.org</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+            </div>
+        </div>
+    </div>
+
+    <!-- LOCATION SEARCH - currently inactive - copy script from site/js/embed.js -->
+    <div class="searchElementsPosition" style="float:left;"></div>
+
+    <div style="float:left;">
+        
+        <div class="searchElements" style="float:left; display:none">
+
+            <div class="filterField">
+                <div class="filterLabel filterLabelMain">Where</div>
+
+                <div class="filterClick" id="filterClickLocation" style="position:relative; float:left;">
+
+                    <div style="position:absolute; right:5px; top:8px;">
+                        <i id="showLocations" class="material-icons" style="font-size:24px;cursor:pointer">&#xE409;</i>
+                        <i id="hideLocations"  class="material-icons" style="font-size:24px;cursor:pointer;display:none">&#xE313;</i>
+                    </div>
+                    <div class="filterSelected" data-selectedXXXREMOVE="all" style="padding-right:28px">Entire State:</div>
+                
+
+                    <!-- Stores location options -->
+                    <select style="display:none;" name="locationDD" id="locationDD">
+                        <option value="all" style="display:none">All</option>
+                        <option value="state" selected="selected">Entire State</option>
+                        <option value="current">Nearby</option>
+                        <option value="custom">Lat/Lon</option>
+                        <option value="city">Search by City</option>
+                        <option value="zip">Search by Zip</option>
+                        <option value="counties">Search by County</option>
+                    </select>
+                    <div class="filterBubbleHolder" style="display:none;margin-left:-14px">
+                        <div class="uparrow uparrow-grey" style="left: 34px;"></div>
+                        <div class="uparrow uparrow-white" style="left: 34px;"></div>
+
+                        <div class="filterBubble">
+                            <ul class="filterUL" style="margin-top:0px">
+                                <li data-id="all" style="display:none"><a href="#">All</a></li>
+                                <li data-id="state" class="selected" style="white-space:nowrap"><a href="#">Entire State</a></li>
+                                <li data-id="city"><a href="#">Cities</a></li>
+                                <li data-id="counties"><a href="#">Counties</a></li>
+                                <li data-id="zip" style="white-space:nowrap"><a href="#">Zip Code</a></li>
+                                
+                                <li data-id="custom" class="hideFilter"><a href="#">Lat/Lon</a></li>
+                                <li data-id="current" class="hideFilter"><a href="#">Nearby</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
+        <!-- Secondary Location Filters -->
+        
+        <div style="float:left;display:none" class="currentCities">
+
+            <div class="filterField">
+                <div class="filterLabel filterLabelMain">Cities</div>
+
+                <div class="cityText"></div>
+
+            </div>
+
+        </div>
+
+        <div style="float:left;display:none" class="currentCounties">
+
+            <div class="filterField">
+                <div class="filterLabel filterLabelMain"></div>
+
+                <div class="filterClick" style="position:relative; float:left;">
+                    County Holder
+                </div>
+            </div>
+
+        </div>
+
+        <div id="coordFields" style="display:none;float:left;min-height:40px;">
+            <div style="float:left; margin-right: 6px">
+                <div class="filterLabel filterLabelMain">Latitude</div>
+                <input id="lat" class="filterClick mobileWide textInput" placeholder="Latitude" type="text" style="width: 120px; margin-top: 0px" />
+            </div>
+            <div style="float:left; margin-right: 6px">
+                <div class="filterLabel filterLabelMain">Longitude</div>
+                <input id="lon" class="filterClick mobileWide textInput" placeholder="Longitude" type="text" style="width: 120px; margin-top: 0px" />
+            </div>
+        </div>
+
+         <div id="zipFields" style="display:none; float:left">
+        
+            <div style="float:left; margin-right:6px; min-height:50px">
+                <div class="filterLabel filterLabelMain">Zip</div>
+                <input id="zip" class="filterClick mobileWide textInput" type="text" placeholder="Enter Zip" style="width: 132px; margin-top: 0px" title="Enter zip code" />
+            </div>
+            <div id="distanceInZip" style="float: left;"></div>
+            
+            <div class="confirmationButtons" style="display:none;float:left; margin-top: 5px">
+                <a id="doneZip" class="button orangeButton" href="#">apply</a>
+                
+            </div>
+            
+        </div>
+
+        <div id="currentButtons" style="float:left;">
+            <div id="doneLatLng" href="#"></div>
+        </div>
+
+        <div id="distanceInNear" style="float: left;"></div>
+
+        <div id="distanceField" class="filterField" style="display:none; float:left; min-height:50px">
+        
+            <div class="filterLabel filterLabelMain">Distance</div>
+
+            <select class="distance triggerSearch">
+                <option value="">Distance...</option>
+                <option value="1">1 Mile</option>
+                <option value="2">2 Miles</option>
+                <option value="3">3 Miles</option>
+                <option value="5">5 Miles</option>
+                <option value="10">10 Miles</option>
+                <option value="15">15 Miles</option>
+                <option value="20">20 Miles</option>
+                <option value="25">25 Miles</option>
+                <option value="30" selected="selected">30 Miles</option>
+                <option value="40">40 Miles</option>
+                <option value="50">50 Miles</option>
+                <option value="60">60 Miles</option>
+                <option value="75">75 Miles</option>
+                <option value="100">100 Miles</option>
+                <option value="150">150 Miles</option>
+                <option value="200">200 Miles</option>
+                <option value="300">300 Miles</option>
+                <option value="400">400 Miles</option>
+                <option value="500">500 Miles</option>
+            </select>
+        </div>
+        <!-- /Secondary Location Filters -->
+        
+
+        <!-- WHERE -->
+                <div class="adminTools" style="display:none;width:330px;float:left">
+                
+                    <div class="filterField" style="float:none;margin-right:0px">
+                        <div class="hideWhere" style="float:right;"><i class="material-icons">&#xE5CD;</i></div>
+
+                        <div class="filterLabel filterLabelMain">WHERE Filter</div>
+
+                        <textarea class="whereFilter filterClick mobileWide textInput" value="" style="width:100%;max-width:300px;" rows="3"></textarea>
+                    </div>
+
+                </div>
+
+        <!-- /WHERE -->
+
+
+    </div>
+    <!-- /LOCATION SEARCH -->
+
+    <div id="productCodesHolder" class="filterField">
+        <div class="filterLabel filterLabelMain">Product Codes</div>
+
+        <!--
+        <select id="selectProduct" class="selectMenu" style="float:left">
+            <option value="1">HS Code(s)</option>
+        </select>
+        -->
+        <input id="productCodes" class="filterClick mobileWide textInput" placeholder="Lookup" type="text" autocomplete="off" style="width: 120px; margin-top: 0px;" onkeyup="return SearchProductCodes(event);" />
+    </div>
+
+    <div class="searchField" style="float:left">
+        &nbsp;<br>
+        <div>
+            <!-- Submit Button -->
+            <div style="float:left; position:relative; margin-right:5px;">
+            
+                <div class="filterLabel filterLabelMain"></div>
+
+                <!-- basicSearch goSearch searchHeight -->
+                <div id="goSearch" class="detailbutton" href="#" style="float:left;"><span style="font-size:14pt;padding-left:2px">&#128269;</span></div>
+
+                <!-- showAll showAllResults searchHeight -->
+                <div id="clearButton" class="detailbutton" style="float:left;margin:0px 6px 0px 0px">Clear</div>
+
+                <div id="botButton" class="detailbutton localonly" style="float:left;margin:0px 6px 0px 0px;padding:5px 8px 0px 8px"><img src="static/img/icon/bot.png" style="width:24px"></div>
+
+                <div id="mapButton" class="detailbutton localonly" style="display:none !important;float:left;margin:0px;padding:5px 8px 0px 8px"><img src="static/img/icon/map.png" style="width:22px"></div>
+                    
+                <div id="catListHolderShow" class='detailbutton lowerButton' style="float:left;margin-left:8px">Industries . . .</div>
+            </div>
+            <!-- /Submit Button -->
+
+        </div>
+
+    </div><!-- /searchField -->
+
+</div>
+
+
+<div id="botPanel" style="position:relative; overflow:auto; display:none">
+
+    <div id="hideBotPanel" style="position:absolute;right:5px;top:8px;color:#777;cursor:pointer;padding-right:10px">&#10005;</div>
+
+    <div style="float:left; margin-right:10px"><img src="static/img/icon/bot.png" style="width:48px"></div>
+    <div id="botConversation" style="overflow:auto;">
+        <div id="botWelcome" style="display:none">
+        <div style="font-size:18px">Get Chatty</div>
+        Chat with our knowledge bot to narrow your results.<br><br>
+        </div>
+
+        <b>Sample questions:</b><br>
+        
+        <a href="">Which companies recently updated their details?</a><br>
+        <a href="">Which companies have the longest description?</a><br><br>
+
+        <!--
+        Loren is doing preliminary work for these two:
+        <a href="">How many product categories are about animals?</a><br>
+        <a href="">Which company has the most categories?</a><br>
+        -->
+        
+        <div style="">
+            <input id="botInput" class="filterClick mobileWide textInput" placeholder="Question" type="text" style="width: 400px; margin: 0px 6px 0px 0px;"  />
+            <div id="botGo" class="detailbutton" style="float:left;margin:0px 6px 0px 0px">GO</div>
+            <!--[Bot input/output]-->
+        </div>
+    </div>
+</div>
+
+<div id="topPanel" style="position: relative; overflow:auto; display:none">
+
+    <div id="hideTopPanel" style="position:absolute;right:5px;top:8px;color:#333;cursor:pointer;padding-right:10px">&#10005;</div>
+
+    <!--
+    Enter a code or keywords.<br><br>
+    -->
+    
+
+    <div style="clear:both"></div>
+
+    <div style="displayX:none">
+        <!-- 
+            Products for Export
+            add arrow to show this
+            Populate a dropdown 
+
+            <div class="catHeader">
+                <b>Products</b>
+            </div>
+        -->
+        
+        <div id="hsCatList">
+            <div range="01-05" text="">Animals & Animal Products</div>
+            <div range="06-15" text="">Vegetable Products</div>
+            <div range="16-24" text="">Foodstuffs</div>
+            <div range="25-27" text="">Mineral Products</div>
+            <div range="28-38" text="">Chemicals & Allied Industries</div>
+            <div range="39-40" text="">Plastics / Rubber</div>
+            <div range="41-43" text="">Raw Hides, Skins, Leather & Furs</div>
+            <div range="44-49" text="">Wood & Wood Products</div>
+            <div range="50-63" text="">Textiles</div>
+            <div range="64-67" text="">Footwear / Headgear</div>
+            <div range="68-71" text="">Stone / Glass</div>
+            <div range="72-83" text="">Metals</div>
+            <div range="84-85" text="">Machinery / Electrical</div>
+            <div range="86-89" text="">Transportation</div>
+            <div range="90-92" text="">Cameras, Instruments, Clocks</div>
+            <div range="93-93" text="">Arms and Ammunition</div>
+            <div range="94-94" text="">Furniture and Bedding</div>
+            <div range="95-95" text="">Toys and Games</div>
+            <div range="96-96" text="">Miscellaneous Manufacturing</div>
+            <div range="97-97" text="">Art and Antiques</div>
+        </div>
+    </div>
+
+    <div style="clear:both;"></div>
+
+    <div id='subcatHeaderHolder'>
+        <b><div id='allProductCats' class='backArrow'>&#60;&nbsp;</div> <span id='subcatHeader'>Harmonized System (HS) Product Categories</span></b>
+    </div>
+
+    <a name="listtop"></a>
+
+    
+    <div id="productSubcats" class="menu" style="padding-top:14px">
+    </div>
+
+    <div id="topPanelFooter">Show more</div>
+</div>
+
+<div id="introText">
+    <div class='exporter'>
+
+        <div id="introDiv"></div>
+
+    </div>
+</div>
+
+<div style="floatX:left">
+    <div id="productCatTitle"></div>
+    <div id="productCodeHolder"></div>
+</div>
+
+
+<div id="nomatchPanel">
+    <div id="nomatchText">
+    </div>
+</div>
+
+<div id="resultsPanel" style="overflow:auto">
+
+    <!-- https://datascape.github.io/community/map/leaflet/#columns=JobsAgriculture:100    onLoad="showBackArrow()"-->
+    <iframe src="" style="display:none" class="iframe" name="mainframe" id="mainframe"></iframe>
+
+    <div id="dataListTop" class='exporter' style="display:none; overflow:auto;margin-bottom:8px">
+
+        <div style='float:left'>Select up to 10 companies when requesting contact info.</div>
+        <!--div style='float:left'>When requesting contact info, send us the names of up to 10 exporters.</div-->
+
+        <div id="rightButtons" style="float:right;">
+            <div id="showMap" class="detailbutton" style="display:none; float:left;margin-right:10px">Map</div>
+            <div id="toggleList" class="detailbutton localonly" style="float:left;margin-right:10px">Toggle</div>
+            <div id="requestInfo" class='orangeButton detailbutton lowerButton' style="display:none; float:left;">Request Contact Info</div>
+        </div>
+
+    </div>
+
+    <div id="resultsHeader">
+    </div>
+
+    <div style="position:relative;">
+        <div style="display:none">
+        <div id="itemMenu" class="filterBubble">
+            <!--
+            <div>View Details</div>
+            <div id='showLocalNews'>Local News</div>
+            <div>Supply Chain</div>
+            <div>Industry Map</div>
+            <div>Add to Contacts</div>
+            
+            <hr>
+            -->
+            <div>Edit Listing</div>
+            <div>Show Edit History</div>
+        </div>
+        </div>
+
+        <div id="dataList"></div>
+    </div>
+</div>
+
+<div style="overflow:auto">
+    <div id="eTable_alert"></div>
+</div>
+
+
+  <!-- For D3 Embedded CSV Sheet -->
+  <div id="dataGrid">
+    
+    <div class="eTable" id="d3div"></div>
+  </div>
+  <style>
+      table {
+          border-collapse: collapse;
+          border: 2px black solid;
+          font: 12px sans-serif;
+          min-height: 10px;
+      }
+      td {
+          border: 1px black solid;
+          padding: 5px;
+          white-space: nowrap;
+      }
+      .eTable {
+        margin-bottom:30px;
+        overflow: auto;
+      }
+      .eTable > table > tr:first-child {
+        background-color: #eee;
+      }
+  </style>
+  <!--
+  <script src="https://d3js.org/d3.v3.min.js"></script>
+  -->
+  <!--script src="../js/d3/d3.v3.js"></script-->
+  <!-- End D3 Embedded CSV Sheet -->
+
+
+</div><!-- /sectionContent -->
+
+
+<!-- /end Common with display -->
+
+
+
+
+
+
+<textarea id="teamtext" style="display:none; width:100%; height:500px">
+<div class="person-wrapper">
+    <div class="person">
+        <div class="person__image draggable-marker" style="background-image: url(https://airbusaerial.com/wp-content/uploads/2017/08/3J4A0806-1-crop-edit.jpg);"></div>
+        <div class="person__meta">
+            <p class="person__name">Jesse Kallman</p>
+            <h6 class="person__title">President</h6>
+        </div>
+    </div>
+    <div class="person">
+        <div class="person__image draggable-marker" style="background-image: url(https://airbusaerial.com/wp-content/uploads/2019/03/nickwayne.thumbnail.jpg);"></div>
+        <div class="person__meta">
+            <p class="person__name">Nick Wayne</p>
+            <h6 class="person__title">Director Business Development</h6>
+        </div>
+    </div>
+    <div class="person">
+        <div class="person__image draggable-marker" style="background-image: url(https://airbusaerial.com/wp-content/uploads/2019/07/matt.workman.IMG_1092.jpg);"></div>
+        <div class="person__meta">
+            <p class="person__name">Matt Workman</p>
+            <h6 class="person__title">Director of Sales / Insurance Industry Leader</h6>
+        </div>
+    </div>
+    <div class="person">
+        <div class="person__image draggable-marker" style="background-image: url(https://airbusaerial.com/wp-content/uploads/2017/08/team_photos-madhav-cropped-1.jpg);"></div>
+        <div class="person__meta">
+            <p class="person__name">Madhav Desetty</p>
+            <h6 class="person__title">Chief Software Architect</h6>
+        </div>
+    </div>
+    <div class="person">
+        <div class="person__image draggable-marker" style="background-image: url(https://airbusaerial.com/wp-content/uploads/2017/08/ABA-Headshot-10.jpg);"></div>
+        <div class="person__meta">
+            <p class="person__name">Jay Dellinger</p>
+            <h6 class="person__title">Software Engineering Manager</h6>
+        </div>
+    </div>
+    <div class="person">
+        <div class="person__image draggable-marker" style="background-image: url(https://airbusaerial.com/wp-content/uploads/2018/07/IMG_9664.jpg);"></div>
+        <div class="person__meta">
+            <p class="person__name">Justin Byrd</p>
+            <h6 class="person__title">Sales Solution Executive</h6>
+        </div>
+    </div>
+    <div class="person">
+        <div class="person__image draggable-marker" style="background-image: url(https://airbusaerial.com/wp-content/uploads/2019/08/IMG_2622.sof_.thumbnail.jpg);"></div>
+        <div class="person__meta">
+            <p class="person__name">Sofonias Yelma</p>
+            <h6 class="person__title">Business Development Representative</h6>
+        </div>
+    </div>
+    <div class="person">
+        <div class="person__image draggable-marker" style="background-image: url(https://airbusaerial.com/wp-content/uploads/2019/01/IMG_1033.jpg);"></div>
+        <div class="person__meta">
+            <p class="person__name">Dawn McGreevey</p>
+            <h6 class="person__title">Marketing Director</h6>
+        </div>
+    </div>
+    <div class="person">
+        <div class="person__image draggable-marker" style="background-image: url(https://airbusaerial.com/wp-content/uploads/2017/12/IMG_6601.jpg);"></div>
+        <div class="person__meta">
+            <p class="person__name">Ryan Anderson</p>
+            <h6 class="person__title">Product Manager</h6>
+        </div>
+    </div>
+    <div class="person">
+        <div class="person__image draggable-marker" style="background-image: url(https://airbusaerial.com/wp-content/uploads/2018/06/IMG_E2952.jpg);"></div>
+        <div class="person__meta">
+            <p class="person__name">Cooper Linn</p>
+            <h6 class="person__title">Assistant Product Manager</h6>
+        </div>
+    </div>
+    <div class="person">
+        <div class="person__image draggable-marker" style="background-image: url(https://airbusaerial.com/wp-content/uploads/2019/07/manuhar.thumbnail.IMG_2609.jpg);"></div>
+        <div class="person__meta">
+            <p class="person__name">Manuhar Chopra</p>
+            <h6 class="person__title">Finance</h6>
+        </div>
+    </div>
+    <div class="person">
+        <div class="person__image draggable-marker" style="background-image: url(https://airbusaerial.com/wp-content/uploads/2019/07/juan.thumbnail.jpg);"></div>
+        <div class="person__meta">
+            <p class="person__name">Juan Jimenez</p>
+            <h6 class="person__title">Manager - Procurement and Operations</h6>
+        </div>
+    </div>
+    <div class="person">
+        <div class="person__image draggable-marker" style="background-image: url(https://airbusaerial.com/wp-content/uploads/2017/12/IMG_6595.jpg);"></div>
+        <div class="person__meta">
+            <p class="person__name">April Johnson</p>
+            <h6 class="person__title">National Recruiting Business Partner</h6>
+        </div>
+    </div>
+    <div class="person">
+        <div class="person__image draggable-marker" style="background-image: url(https://airbusaerial.com/wp-content/uploads/2017/08/ABA-Headshot-04.jpg);"></div>
+        <div class="person__meta">
+            <p class="person__name">Brad Mandala</p>
+            <h6 class="person__title">Director of Flight Operations</h6>
+        </div>
+    </div>
+    <div class="person">
+        <div class="person__image draggable-marker" style="background-image: url(https://airbusaerial.com/wp-content/uploads/2017/08/ABA-Headshot-02.jpg);"></div>
+        <div class="person__meta">
+            <p class="person__name">Craig Beese</p>
+            <h6 class="person__title">Senior Project Manager</h6>
+        </div>
+    </div>
+    <div class="person">
+        <div class="person__image draggable-marker" style="background-image: url(https://airbusaerial.com/wp-content/uploads/2017/08/ABA-Headshot-08.jpg);"></div>
+        <div class="person__meta">
+            <p class="person__name">Shannon Allen</p>
+            <h6 class="person__title">Manager - Business Operations</h6>
+        </div>
+    </div>
+    <div class="person">
+        <div class="person__image draggable-marker" style="background-image: url(https://airbusaerial.com/wp-content/uploads/2017/08/ABA-Headshot-11.jpg);"></div>
+        <div class="person__meta">
+            <p class="person__name">Samantha Prince</p>
+            <h6 class="person__title">Product Designer</h6>
+        </div>
+    </div>
+    <div class="person">
+        <div class="person__image draggable-marker" style="background-image: url(https://airbusaerial.com/wp-content/uploads/2019/01/IMG_1037.jpg);"></div>
+        <div class="person__meta">
+            <p class="person__name">Dexter Ferguson</p>
+            <h6 class="person__title">Product Designer</h6>
+        </div>
+    </div>
+    <div class="person">
+        <div class="person__image draggable-marker" style="background-image: url(https://airbusaerial.com/wp-content/uploads/2017/08/ABA-Headshot-03.jpg);"></div>
+        <div class="person__meta">
+            <p class="person__name">Sidney Collins</p>
+            <h6 class="person__title">Senior Front-End Software Engineer &amp; Head of Culture</h6>
+        </div>
+    </div>
+    <div class="person">
+        <div class="person__image draggable-marker" style="background-image: url(https://airbusaerial.com/wp-content/uploads/2017/12/IMG_6589-2.jpg);"></div>
+        <div class="person__meta">
+            <p class="person__name">Terri Chu</p>
+            <h6 class="person__title">Senior Software Engineer</h6>
+        </div>
+    </div>
+    <div class="person">
+        <div class="person__image draggable-marker" style="background-image: url(https://airbusaerial.com/wp-content/uploads/2017/12/IMG_6598.jpg);"></div>
+        <div class="person__meta">
+            <p class="person__name">Nick Keller</p>
+            <h6 class="person__title">Software Engineer</h6>
+        </div>
+    </div>
+    <div class="person">
+        <div class="person__image draggable-marker" style="background-image: url(https://airbusaerial.com/wp-content/uploads/2018/02/IMG_3846-e1518129212419.jpg);"></div>
+        <div class="person__meta">
+            <p class="person__name">Kyle Plaugher</p>
+            <h6 class="person__title">Front-End Web Developer</h6>
+        </div>
+    </div>
+    <div class="person">
+        <div class="person__image draggable-marker" style="background-image: url(https://airbusaerial.com/wp-content/uploads/2018/02/IMG_8359-2-e1518129291472.jpg);"></div>
+        <div class="person__meta">
+            <p class="person__name">Eric Sherouse</p>
+            <h6 class="person__title">Senior Front-End 3D Developer</h6>
+        </div>
+    </div>
+    <div class="person">
+        <div class="person__image draggable-marker" style="background-image: url(https://airbusaerial.com/wp-content/uploads/2018/09/IMG_0506.jpg);"></div>
+        <div class="person__meta">
+            <p class="person__name">Brent Lewis</p>
+            <h6 class="person__title">Senior Front-End 3D Developer</h6>
+        </div>
+    </div>
+    <div class="person">
+        <div class="person__image draggable-marker" style="background-image: url(https://airbusaerial.com/wp-content/uploads/2019/01/IMG_1034.jpg);"></div>
+        <div class="person__meta">
+            <p class="person__name">Jennifer Schiavone</p>
+            <h6 class="person__title">Software Development Engineer in Test</h6>
+        </div>
+    </div>
+    <div class="person">
+        <div class="person__image draggable-marker" style="background-image: url(https://airbusaerial.com/wp-content/uploads/2018/07/IMG_9669.jpg);"></div>
+        <div class="person__meta">
+            <p class="person__name">Frank Obusek</p>
+            <h6 class="person__title">Geospatial Engineer</h6>
+        </div>
+    </div>
+    <div class="person">
+        <div class="person__image draggable-marker" style="background-image: url(https://airbusaerial.com/wp-content/uploads/2018/04/IMG_8431-1.jpg);"></div>
+        <div class="person__meta">
+            <p class="person__name">Miguel Serrano, PhD.</p>
+            <h6 class="person__title">Computer Vision &amp; Machine Learning Engineer</h6>
+        </div>
+    </div>
+    <div class="person">
+        <div class="person__image draggable-marker" style="background-image: url(https://airbusaerial.com/wp-content/uploads/2018/05/IMG_9465.jpg);"></div>
+        <div class="person__meta">
+            <p class="person__name">Yazeed Alaudah</p>
+            <h6 class="person__title">Machine Learning Engineer</h6>
+        </div>
+    </div>
+    <div class="person">
+        <div class="person__image draggable-marker" style="background-image: url(https://airbusaerial.com/wp-content/uploads/2018/06/ValarieHeadshot.jpg);"></div>
+        <div class="person__meta">
+            <p class="person__name">Valarie Regas</p>
+            <h6 class="person__title">Jr. DevOps Engineer</h6>
+        </div>
+    </div>
+    <div class="person">
+        <div class="person__image draggable-marker" style="background-image: url(https://airbusaerial.com/wp-content/uploads/2018/06/RobHeadshot.jpg);"></div>
+        <div class="person__meta">
+            <p class="person__name">Rob Gilliom</p>
+            <h6 class="person__title">Sr. Full Stack Software Engineer</h6>
+        </div>
+    </div>
+    <div class="person">
+        <div class="person__image draggable-marker" style="background-image: url(https://airbusaerial.com/wp-content/uploads/2018/07/IMG_9765.jpg);"></div>
+        <div class="person__meta">
+            <p class="person__name">Mike Mommsen</p>
+            <h6 class="person__title">Backend Software Engineer</h6>
+        </div>
+    </div>
+    <div class="person">
+        <div class="person__image draggable-marker" style="background-image: url(https://airbusaerial.com/wp-content/uploads/2017/08/ABA-Headshot-06.jpg);"></div>
+        <div class="person__meta">
+            <p class="person__name">Jared Salzmann</p>
+            <h6 class="person__title">Senior Operations &amp; Automation Engineer</h6>
+        </div>
+    </div>
+    <div class="person">
+        <div class="person__image draggable-marker" style="background-image: url(https://airbusaerial.com/wp-content/uploads/2019/04/laura.IMG_1702.thumb_.3.jpg);"></div>
+        <div class="person__meta">
+            <p class="person__name">Laura Chapman</p>
+            <h6 class="person__title">Receptionist</h6>
+        </div>
+    </div>
+</div>
+</textarea>
+
+
+
+
+
+
+<link rel="stylesheet" href="static/css/material_icons.css" />
+
+<script>
+
+$(document).ready(function () {
+
+});
+
+</script>
+
+<script src="static/js/display/display-lower.js"></script>
+<script src="static/js/leaflet/Leaflet.ImageOverlay.Rotated.js"></script>
+
+
+</body>
+
+</html>

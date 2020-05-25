@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Avatar - Data Table</title>
+<link rel="icon" type="image/x-icon" href="../img/logo/favicon.png" />
+
+<!--
+	https://frappe.io/datatable
+-->
+
+<!-- include styles for datatable -->
+<link href="https://unpkg.com/frappe-datatable@0.0.5/dist/frappe-datatable.min.css" rel="stylesheet">
+
+<link href="../css/frappe-theme-bs4.css" rel="stylesheet">
+
+
+<style>
+body {
+  font-family: "Helvetica Neue", sans-serif;
+  margin:30px;
+}
+#enter-data-field {
+  width: calc(100% - 8px);
+  height: 100px;
+  font-family: "Consolas", monospace;
+}
+#update-data-from-file {
+  display: none;
+}    
+.file-upload {
+  height: 40px;
+  margin-bottom: 10px;
+}
+.file-upload-name {
+  display: inline-block;
+  margin-bottom: 8px;
+}
+.file-upload-button {
+  displayX: inline-block;
+}
+.button {
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+  transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+  background: #45b29d;
+  color: #fff;
+  cursor: pointer;
+  padding: 10px;
+  display: inline-block;
+}
+.button:hover {
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+}
+</style>
+
+<script src="../js/papaparse.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+</head>
+
+
+<body>
+
+<!-- create the container element -->
+<label class="button" id="saveToDatabase" style="background-color:red; float:right; display:none">Save</label>
+
+<div id="datatable"></div><br><br>
+<div class="file-upload-name" id="filename"></div>
+<div id="datatable1"></div><br><br>
+
+<!-- include the dependencies -->
+<script src="https://unpkg.com/sortablejs@1.7.0/Sortable.min.js"></script>
+<script src="https://unpkg.com/clusterize.js@0.18.0/clusterize.min.js"></script>
+<!-- include the lib -->
+<script src="https://unpkg.com/frappe-datatable@0.0.5/dist/frappe-datatable.min.js"></script>
+
+<!-- initialize DataTable -->
+<script>
+  const datatable = new DataTable('#datatable', {
+    columns: ['Name', 'Position', 'Location'],
+    data: [
+      ['Faris', 'Software Developer', 'Atlanta'],
+      ['Manas', 'Software Engineer', 'Mumbia'],
+    ]
+  });
+</script>
+
+<div style="clear:both; margin-bottom:15px">
+For your privacy, data will only reside in your browser while previewing.  A save button will appear.  It's not yet active.  
+</div>
+
+    <div class="file-upload" style="float:left; margin-right:10px">
+      <div class="file-upload-button">
+        <input type="file" name="File Upload" id="update-data-from-file" accept=".csv" />
+        <label class="button" id="fileLabel" for="update-data-from-file">Open CSV in Browser</label>
+      </div>
+      
+    </div>
+
+    <label id="showPasteField" class="button" style="display:none; float:left; margin-right:10px">
+    	Paste from spreadsheet
+    </label>
+
+    <div id="pasteField" style="display:none; clear:both">
+	    Paste your data from a spreadsheet:
+	    <textarea id="enter-data-field"></textarea>
+	    <div class="button" id="update-data-from-field">
+	      Update data
+	    </div>
+	</div>
+
+    
+    <script>
+      // https://bl.ocks.org/HarryStevens/0ce529b9b5e4ea17f8db25324423818f
+      // Upload CSV - Event handlers
+      $("#update-data-from-file").change(function(e){
+        changeDataFromUpload(e, function(data){
+
+          console.log(data);
+          //const datatable1 = new DataTable('#datatable1', data);
+
+        });
+      });
+      $("#update-data-from-field").click(function(){
+        changeDataFromField(function(data){
+          console.log(data);
+        });
+      });
+      $("#showPasteField").click(function(){
+        $("#pasteField").show();
+      });
+
+      // Parse pasted CSV
+      function changeDataFromField(cb){
+        var arr = [];
+        $('#enter-data-field').val().replace( /\n/g, "^^^xyz" ).split( "^^^xyz" ).forEach(function(d){
+          arr.push(d.replace( /\t/g, "^^^xyz" ).split( "^^^xyz" ))
+        });
+        //cb(csvToJson(arr));
+        showData(arr);
+      }
+
+      function showData(csvData) {
+      	  localStorage.setItem("csvData",csvData);
+
+	      // Header false prevents row objects containing column names
+	      var parsed = Papa.parse(csvData,{header: false}); 
+	      let header = parsed[Object.keys(parsed)[0]][0];
+	      let rows = [parsed[Object.keys(parsed)[0]]].shift();
+	      rows.shift(); // Oddly, we need to trim first row off again.
+	      const datatable1 = new DataTable('#datatable1', {
+	      		columns: header,
+			    data: rows
+			});
+			
+	      $("#saveToDatabase").show();
+      }
+      // Use the HTML5 File API to read the CSV
+      function changeDataFromUpload(evt, cb){
+        if (!browserSupportFileUpload()) {
+          console.error("The File APIs are not fully supported in this browser!");
+        } else {
+          var data = null;
+          var file = evt.target.files[0];
+          var fileName = file.name;
+          $("#filename").html(fileName);
+
+          if (file !== "") {
+            var reader = new FileReader();
+
+            reader.onload = function(event) {
+              var csvData = event.target.result.replace(/^\s+|\s+$/g, ''); // Remove line breaks from start and end
+              
+              localStorage.setItem("csvData",csvData);
+
+              // Header false prevents row objects containing column names
+              var parsed = Papa.parse(csvData,{header: false}); 
+              let header = parsed[Object.keys(parsed)[0]][0];
+              let rows = [parsed[Object.keys(parsed)[0]]].shift();
+              rows.shift(); // Oddly, we need to trim first row off again.
+              const datatable1 = new DataTable('#datatable1', {
+              		columns: header,
+				    data: rows
+				});
+				
+              $("#saveToDatabase").show();
+              //cb(csvToJson(parsed.data));
+              //alert(localStorage.getItem("csvData"));
+            };
+            reader.onerror = function() {
+              console.error("Unable to read " + file.fileName);
+            };
+          }
+
+          reader.readAsText(file);
+          $("#update-data-from-file")[0].value = "";
+        }
+      }
+
+      // Method that checks that the browser supports the HTML5 File API
+      function browserSupportFileUpload() {
+        var isCompatible = false;
+        if (window.File && window.FileReader && window.FileList && window.Blob) {
+          isCompatible = true;
+        }
+        return isCompatible;
+      }
+
+      // Parse the CSV input into JSON
+      function csvToJson(data) {
+        var cols = data[0];
+        var out = [];
+        for (var i = 1; i < data.length; i++){
+          var obj = {};
+          var row = data[i];
+          cols.forEach(function(col, index){
+            obj[col] = row[index];
+          });
+          out.push(obj);
+        }
+        return out;
+      }
+    </script>
+  
+</body>
+</html>

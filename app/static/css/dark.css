@@ -1,0 +1,14 @@
+/* DARK */
+body, textarea, .marker-menu, #topnav, #sidelist {
+	background-color: #333;
+	color: #aaa;
+}
+#grouplisttop {
+	background-color: #222;
+}
+.iconcircle, .topcircle {
+	background-color: #111;
+}
+#flexwrapper {
+	border-bottom: 1px solid #999;
+}
