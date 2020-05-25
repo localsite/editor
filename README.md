@@ -2,7 +2,7 @@
 # Google Sheet Editor
 
 Javascript browser-frontend work resides in [Google-OneTap](https://model.earth/community/resources/google-onetap/).  
-
+This repo requires having the [community](https://github.com/modelearth/community/) repo in an adjacent folder, within the same siteroot.  
 <!--
 It may be possible to duplicate some of the following server-side process using this Python 2.7 
 <a href="https://codelabs.developers.google.com/codelabs/credential-management-api/index.html">Auto Sign-in with the Credential Management API</a>.
