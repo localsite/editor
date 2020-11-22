@@ -180,7 +180,13 @@ button:hover {
 
           // BUGBUG - This will cause an error if the user has not already authorized Quickstart Output
           // and they then approve One-Tap
-          // makeApiCall();
+          try {
+            makeApiCall();
+          }
+          catch(err) {
+            console.log(err)
+          }
+          
         } else {
           authorizeButton.style.display = 'block';
           signoutButton.style.display = 'none';
@@ -309,7 +315,7 @@ button:hover {
   <br><br>
   -->
 
-  We're working toward allowing users to edit existing rows in a Google Sheet using REST/CRUD with a single-page-app. Also see our progress with server-side Google Auth using <a href="../">Python with Flask</a>.<br><br>
+  We're working toward allowing users to edit existing rows in a Google Sheet using REST/CRUD with a single-page-app. Also see our progress with server-side Google Auth using <a href="../">Python&nbsp;with&nbsp;Flask</a>.<br><br>
 
 
   You'll need to be logged into the Google gmail account in another browser window 
