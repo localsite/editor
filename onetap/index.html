@@ -259,13 +259,14 @@ button:hover {
           'resourceName': 'people/me',
           'requestMask.includeField': 'person.names,person.photos,person.emailAddresses'
         }).then(function(resp) {
+          // 
 
           //console.log(resp.result);
           var p = document.createElement('p');
           var givenName = resp.result.names[0].givenName; // The first name
           var displayName = resp.result.names[0].displayName; // The full name
           var email = resp.result.emailAddresses[0].value;
-          //var photo = 
+          //var email = "(email off)";
 
           var DOM_img = document.createElement("img");
           DOM_img.src = resp.result.photos[0].url;
@@ -342,7 +343,7 @@ button:hover {
 
   TO DO: Figure out how to display the One-Tap popup after the user has clicked the X in the One-Tap popup.  
   The message "suppressed_by_user" is triggered in an alert within this page after clicking the X and hitting reload. 
-  You can clear recent cookies to restore the One-Tap popup. Log back in to GMail after clearing recent cookies.<br><br>
+  You can clear recent cookies to restore the One-Tap popup. (We could try using javascript to clear cookies.) Log back in to GMail after clearing recent cookies.<br><br>
 
   <!--
   <button class="g_id_signin" style="margin-right:5px">Sign In 2</button> - Oddly, the content of this button gets replaced with an iFrame. This was not occuring initially. The button has never worked.<br><br>
