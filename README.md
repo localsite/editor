@@ -55,7 +55,7 @@ Clone from <a href="https://github.com/modelearth/editor">github.com/modelearth/
 
 ## B. Get your Auth IDs
 
-[Create a Google Project or use existing project IDs](editor)  
+[Create a Google Project or use existing project IDs](google)  
 
 ## C. Install the Editor
 

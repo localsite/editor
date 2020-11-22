@@ -60,11 +60,17 @@ button:hover {
 <div class="content contentpadding" style="padding-top: 0px">
 
 <div style="float:left; border:1px solid #ccc; padding:20px; margin-right:40px; max-width:400px">
-    <p><b>Quickstart Output</b> - After authorizong, loads user name and image before One-Tap when hitting reload.</p>
+    <p><b>Quickstart Output</b> - After authorizong, clicking One-Tap will reveal your person info in person-info div. Oddly a different Google account appeared on the live Github site.</p>
+
+
+    <p>After clicking the signout button and refresh, your person info will 
+    no longer appear until you click Authorize again (then refresh and onetap).</p>
 
     <!--Add buttons to initiate auth sequence and sign out-->
     <button id="authorize_button" style="display: none;">Authorize</button>
+    <div id="person-info"></div>
     <button id="signout_button" class="orangebutton" style="display: none;">Sign Out</button>
+    
 
     <pre id="content" style="white-space: pre-wrap;"></pre>
 
@@ -193,6 +199,7 @@ button:hover {
        */
       function handleSignoutClick(event) {
         gapi.auth2.getAuthInstance().signOut();
+        document.getElementById('person-info').innerHTML = ""; // Clear person info display
       }
 
       /**
@@ -243,19 +250,25 @@ button:hover {
       function makeApiCall() {
         gapi.client.people.people.get({
           'resourceName': 'people/me',
-          'requestMask.includeField': 'person.names,person.photos'
+          'requestMask.includeField': 'person.names,person.photos,person.emailAddresses'
         }).then(function(resp) {
-          var p = document.createElement('p');
-          var name = resp.result.names[0].givenName;
-          var photo = 
 
-          p.appendChild(document.createTextNode('Hello, '+name+'!'));
+          //console.log(resp.result);
+          var p = document.createElement('p');
+          var givenName = resp.result.names[0].givenName; // The first name
+          var displayName = resp.result.names[0].displayName; // The full name
+          var email = resp.result.emailAddresses[0].value;
+          //var photo = 
 
           var DOM_img = document.createElement("img");
           DOM_img.src = resp.result.photos[0].url;
           p.appendChild(DOM_img);
-          
-          document.getElementById('content').appendChild(p);
+          p.appendChild(document.createElement("br"));
+          p.appendChild(document.createTextNode(displayName));
+          p.appendChild(document.createElement("br"));
+          p.appendChild(document.createTextNode(email));
+
+          document.getElementById('person-info').appendChild(p);
         });
       }
 
@@ -288,7 +301,7 @@ button:hover {
   </div>
 
   <a href="https://developers.google.com/identity/one-tap/web/guides/handle-credential-responses-js-functions" target="ontap-docs">One-Tap</a> is included in the current page with a <a href="../../../editor/gsample/">Google API Client sample</a>. 
-  This <a href="https://stackoverflow.com/questions/48953745/how-to-use-the-google-api-client-for-javascript-with-a-one-tap-sign-in-flow/49023255#49023255">Stack Overflow</a> post describes some of the timing issues. 
+  This <a href="https://stackoverflow.com/questions/48953745/how-to-use-the-google-api-client-for-javascript-with-a-one-tap-sign-in-flow/49023255#49023255">Stack&nbsp;Overflow</a> post describes some of the timing issues. 
 
   <!--
   Here's an <a href="../google-yolo">older example of One-Tap</a> by Zapier that uses an iFrame 
