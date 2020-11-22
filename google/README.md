@@ -9,12 +9,10 @@
 
 3. Click ‘Enable and manage APIs’.
 
-4. Make sure "Google Sheets API" <!-- this one for sure --> and possibly 
-
-“Contacts API” and “Google+ API” are on.<!-- not sure if this is needed, 
+4. Make sure "Google Sheets API" <!-- this one for sure --> and possibly “Contacts API” and “Google+ API” are on.<!-- not sure if this is needed, 
 found here: https://medium.com/binar-academy/social-login-login-with-google-account-4b10224494ac -->
 
-	<span style="background-color: #FFFF00">Might not be necessary.</span> 
+<span style="background-color: #FFFF00">Might not be necessary.</span> 
 
 5. Click "Create credentials"<!--Click "Create credentials" choose "OAuth client ID" then "Web Server"-->
 
@@ -70,5 +68,6 @@ https://console.developers.google.com/apis/credentials/oauthclient/
 <br>
 
 ---
-[Editor](../)
+[Editor](../) | 
+[Onetap](../onetap/)
 
