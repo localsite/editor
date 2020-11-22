@@ -1,17 +1,29 @@
 
 # Google Sheet Editor
 
-Javascript browser-frontend work resides in [Google-OneTap](https://model.earth/community/resources/google-onetap/).  
-This repo requires having the [community](https://github.com/modelearth/community/) repo in an adjacent folder, within the same siteroot.  
+We're working toward a process to edit rows in a [MapsForUs Google Sheet](../localsite/map/mapsforus) using REST/CRUD after logging into a Google account within a brower.   
+
+Javascript browser-frontend work resides in [Google-OneTap](onetap/).   
+
+This repo requires having the [localsite repo](https://github.com/localsite/) in an adjacent folder, within the same site root.  
 <!--
 It may be possible to duplicate some of the following server-side process using this Python 2.7 
 <a href="https://codelabs.developers.google.com/codelabs/credential-management-api/index.html">Auto Sign-in with the Credential Management API</a>.
 -->
 
-[JAM Stack website from to update a Google Sheet](https://medium.com/@abuango/how-to-collect-form-data-from-a-jamstack-website-to-google-sheets-using-google-cloud-functions-a59546c803a5)
-Google Cloud Function Web Service that appends any data sent to it to a Google sheet using a NodeJS script. Also sends an email notification.  
 
-The Firebase/DJango "trust level" service could be optional. For installs with only the first 3 lanes (Browser, Google API, Google Sheet), the row approval process could occur within a reviewer-only secondary sheet containing the status of each row. (If possible, a restricted tab or column could contain the row status.) 
+[JAM Stack website form to update a Google Sheet](https://medium.com/@abuango/how-to-collect-form-data-from-a-jamstack-website-to-google-sheets-using-google-cloud-functions-a59546c803a5)
+using Google Cloud Function Web Service that appends any data sent to it to a Google sheet using a NodeJS script. Also sends an email notification.  
+
+
+
+
+[How to host a Python websocket on Google Cloud](https://cloud.google.com/appengine/docs/flexible/python/using-websockets-and-session-affinity)  
+
+[Google Cloud websockets for authentication](https://codeburst.io/react-authentication-with-twitter-google-facebook-and-github-862d59583105)
+
+[Includes link to activating https on one’s local computer using OpenSLL](https://www.freecodecamp.org/news/how-to-get-https-working-on-your-local-development-environment-in-5-minutes-7af615770eec/)
+
 
 <!--
 Also see our screen scrapper that sends to a Google Sheet.
@@ -22,7 +34,7 @@ maps.georgia.org account to edit diagram
 https://app.diagrams.net/#G1hzphUDacB3DGW8UyzZptcxuTlv9uui53
 -->
 
-<a href="diagram/diagram.html"><img src="diagram/diagram.png" style="width:100%"></a><br><br>
+
 
 The following uses Flask, which may not be necessary using the [Google Cloud Function NodeJS example](https://medium.com/@abuango/how-to-collect-form-data-from-a-jamstack-website-to-google-sheets-using-google-cloud-functions-a59546c803a5) (Same link as above.)
 
@@ -30,17 +42,16 @@ These <a href='https://realpython.com/flask-google-login/'>Flask Google Login</a
 
 Here are steps for deploying [Flask to Google Cloud with Docker into a Kubernetes Cluster](https://medium.com/honeybadger-ai/how-to-deploy-machine-learning-models-using-flask-docker-and-google-cloud-platform-gcp-6e7bf1b339d5)  
 
-To view this page on localhost, place in your site root adjacent to the "[community](https://github.com/modelearth/community)" repo.  See [Getting Started](https://model.earth/community/samples/markdown/)  
+To view this page on localhost, place in your site root adjacent to the "[community](https://github.com/modelearth/community)" repo.  See [Getting Started](https://model.earth/localsite/samples/markdown/)  
 <br>
 
-<span class="alert" style="font-size:1.2em">Flask Version Incomplete - Help Needed</span>
+<h1>Flask Version (Incomplete)</h1>
 
-We're working toward a process to edit rows in a [MapsForUs Google Sheet](../community/map/mapsforus) using REST/CRUD after logging into a Google account within a brower.  An HTML list pulled from the sheet will allow editors to find and update directory listings, including the [Georgia EPA recycling center datasets](https://data.georgia.org/#recycling).  
 
 ## A. Clone this Repo
 
 You'll be adding private keys, then running a local Python Flask server.  
-Clone from <a href="https://github.com/modelearth/crowdsource">github.com/modelearth/crowdsource</a>  
+Clone from <a href="https://github.com/modelearth/editor">github.com/modelearth/editor</a>  
 
 ## B. Get your Auth IDs
 
@@ -48,7 +59,7 @@ Clone from <a href="https://github.com/modelearth/crowdsource">github.com/modele
 
 ## C. Install the Editor
 
-1. Open a terminal in the local "crowdsource" folder.
+1. Open a terminal in the local "editor" folder.
 
 1. Install Python 3.7 if you don't have it currently.  
 
@@ -56,7 +67,7 @@ Clone from <a href="https://github.com/modelearth/crowdsource">github.com/modele
 	python3 -V
 ```
 
-3. Within your crowdsource root directory run commands:
+3. Within your editor root directory run commands:
 ```
 chmod +x setup.sh
 ./setup.sh
@@ -99,7 +110,7 @@ After generating, tried adding to the "System" keychain, but error continues: NE
 <!--
 ## D. For MapsForUs Auth
 
-To do: [Config to avoid Unverified apps error](https://support.google.com/cloud/answer/7454865) - To include email in [MapsForUs comment](../community/) in our copy of the MapsforUS Google Sheet Template.
+To do: [Config to avoid Unverified apps error](https://support.google.com/cloud/answer/7454865) - To include email in [MapsForUs comment](../localsite/) in our copy of the MapsforUS Google Sheet Template.
 
 
 Also did for gsample
@@ -126,7 +137,7 @@ https://console.developers.google.com/apis/credentials/domainverification?projec
 <span style="background-color: #FFFF00">
 <b>TO DO:</b> Create a CRUD/REST form based on [Real World](https://neighborhood.org/realworld) and set-up a [Real World Starter Kit](https://github.com/gothinkster/realworld-starter-kit) that also works with [Google Cloud Functions](https://medium.com/@abuango/how-to-collect-form-data-from-a-jamstack-website-to-google-sheets-using-google-cloud-functions-a59546c803a5)  
 
-<b>Proposed Frontend:</b> Either existing "Vanilla JS Web Components" ([initial tests](https://model.earth/community/resources/google-onetap/)) or use JQuery. 
+<b>Proposed Frontend:</b> Either existing "Vanilla JS Web Components" ([initial tests](https://model.earth/localsite/resources/google-onetap/)) or use JQuery. 
 
 <b>Proposed Backend for Trust Levels:</b> Either a Google API Flask connector, DJango with Discourse](https://github.com/discourse/discourse), or another Trust Level storehouse, like Google Firebase.
 </span>

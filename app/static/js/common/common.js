@@ -1,4 +1,4 @@
-// Updates originate in community/js/common/common.js
+// Updates originate in localsite/js/localsite.js
 
 function loadParams(paramStr,hashStr) {
   // Priority: 1st hash, 2nd url search

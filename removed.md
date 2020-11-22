@@ -1,0 +1,3 @@
+The Firebase/DJango "trust level" service could be optional. For installs with only the first 3 lanes (Browser, Google API, Google Sheet), the row approval process could occur within a reviewer-only secondary sheet containing the status of each row. (If possible, a restricted tab or column could contain the row status.)  
+
+<a href="diagram/diagram.html"><img src="diagram/diagram.png" style="width:100%"></a><br><br>

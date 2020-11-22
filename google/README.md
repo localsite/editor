@@ -70,5 +70,5 @@ https://console.developers.google.com/apis/credentials/oauthclient/
 <br>
 
 ---
-[Run Setup](https://model.earth/crowdsource/)
+[Editor](../)
 
