@@ -45,6 +45,13 @@ Here are steps for deploying [Flask to Google Cloud with Docker into a Kubernete
 To view this page on localhost, place in your site root adjacent to the "[community](https://github.com/modelearth/community)" repo.  See [Getting Started](https://model.earth/localsite/samples/markdown/)  
 <br>
 
+
+Go here: (for map.)
+https://console.developers.google.com/
+
+Click "Domain Verification" and enter domains (works on localhost before doing this) the verify ownership by copying html file into site root.
+
+
 <h1>Flask Version (Incomplete)</h1>
 
 
