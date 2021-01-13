@@ -9,6 +9,8 @@ This repo requires having the [localsite repo](https://github.com/localsite/) in
 
 Go to [console.developers.google.com](https://console.developers.google.com/). Under "Domain Verification" enter domains (works on localhost before doing this). Verify ownership by copying html file into site root. (Used maps.g account) <!-- also added l email.) -->
 
+Each domain also needs to be registered under [Google SearchConsole](https://www.google.com/webmasters/tools). <!-- Did both of the above for neighborhood.org, but still need to find where full path is set. onetap page path is not authorized yet for neighborhood.org -->
+
 <!--
 It may be possible to duplicate some of the following server-side process using this Python 2.7 
 <a href="https://codelabs.developers.google.com/codelabs/credential-management-api/index.html">Auto Sign-in with the Credential Management API</a>.
