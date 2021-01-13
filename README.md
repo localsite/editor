@@ -5,7 +5,10 @@ We're working toward a process to edit rows in a [MapsForUs Google Sheet](../loc
 
 Javascript browser-frontend work resides in [Google-OneTap](onetap/).   
 
-This repo requires having the [localsite repo](https://github.com/localsite/) in an adjacent folder, within the same site root.  
+This repo requires having the [localsite repo](https://github.com/localsite/) in an adjacent folder in the same site root. See [getting started](../localsite/start/).  
+
+Go to [console.developers.google.com](https://console.developers.google.com/). Under "Domain Verification" enter domains (works on localhost before doing this). Verify ownership by copying html file into site root. (Used maps.g account) <!-- also added l email.) -->
+
 <!--
 It may be possible to duplicate some of the following server-side process using this Python 2.7 
 <a href="https://codelabs.developers.google.com/codelabs/credential-management-api/index.html">Auto Sign-in with the Credential Management API</a>.
@@ -33,26 +36,16 @@ Also see our screen scrapper that sends to a Google Sheet.
 maps.georgia.org account to edit diagram
 https://app.diagrams.net/#G1hzphUDacB3DGW8UyzZptcxuTlv9uui53
 -->
+<br>
 
+<h1>Flask Version (Incomplete)</h1>
 
-
-The following uses Flask, which may not be necessary using the [Google Cloud Function NodeJS example](https://medium.com/@abuango/how-to-collect-form-data-from-a-jamstack-website-to-google-sheets-using-google-cloud-functions-a59546c803a5) (Same link as above.)
+Using Flask may not be necessary is using the [Google Cloud Function NodeJS example](https://medium.com/@abuango/how-to-collect-form-data-from-a-jamstack-website-to-google-sheets-using-google-cloud-functions-a59546c803a5) (Also linked above.)
 
 These <a href='https://realpython.com/flask-google-login/'>Flask Google Login</a> set-up steps may be similar.
 
 Here are steps for deploying [Flask to Google Cloud with Docker into a Kubernetes Cluster](https://medium.com/honeybadger-ai/how-to-deploy-machine-learning-models-using-flask-docker-and-google-cloud-platform-gcp-6e7bf1b339d5)  
-
-To view this page on localhost, place in your site root adjacent to the "[community](https://github.com/modelearth/community)" repo.  See [Getting Started](https://model.earth/localsite/samples/markdown/)  
 <br>
-
-
-Go here: (for map.)
-https://console.developers.google.com/
-
-Click "Domain Verification" and enter domains (works on localhost before doing this) the verify ownership by copying html file into site root.
-
-
-<h1>Flask Version (Incomplete)</h1>
 
 
 ## A. Clone this Repo
@@ -97,7 +90,7 @@ If successful, you will see a 'Google Login' and you'll be able to login to your
 This does not work in Chrome or Brave (tested on a Mac).   
 
 
-## C. Self-Signed SSL
+## D. Self-Signed SSL
 
 Even after installing locally, you will see a browser warning indicating that the certificate should not be trusted. You can proceed past this warning to view the encrypted site. 
 
