@@ -55,12 +55,14 @@ button:hover {
 
 <body>
 <div id="header" style="display:none"></div>
-<div style="height:60px"></div>
+<!--<div style="height:60px"></div>-->
 
 <div class="content contentpadding" style="padding-top: 0px">
 
+<div id="list"></div>
+
 <div style="float:left; border:1px solid #ccc; padding:20px; margin-right:40px; max-width:400px">
-    <p><b>Quickstart Output</b> - After authorizong, clicking One-Tap will reveal your person info in person-info div. The quickstart account can differ from the onetap account.</p>
+    <p><b>Quickstart Output</b> - After authorizong, clicking One-Tap will reveal your person info in the person-info div. The quickstart account can differ from the onetap account.</p>
 
 
     <p>After clicking the signout button and refresh, your person info will 
@@ -73,8 +75,6 @@ button:hover {
     
 
     <pre id="content" style="white-space: pre-wrap;"></pre>
-
-
 
 
 
@@ -177,6 +177,7 @@ button:hover {
           */
           //}
           listMajors();
+          listWebsites();
 
           // BUGBUG - This will cause an error if the user has not already authorized Quickstart Output
           // and they then approve One-Tap
@@ -252,6 +253,51 @@ button:hover {
           appendPre('Error: ' + response.result.error.message);
         });
       }
+
+      // List of Open Data providers
+      function appendList(message) {
+        var pre = document.getElementById('list');
+        //var textContent = document.createTextNode(message + '\n');
+        var textContent = createHTMLNode(message);
+        //appendChild(element);
+        pre.appendChild(textContent);
+      }
+      function listWebsites() {
+        gapi.client.sheets.spreadsheets.values.get({
+          spreadsheetId: '1bvD9meJgMqLywdoiGwe3f93sw1IVI_ZRjWSuCLSebZo',
+          range: 'OpenData!A2:J',
+        }).then(function(response) {
+          var range = response.result;
+          if (range.values.length > 0) {
+            appendList('<h2>Code for Atlanta - Georgia Operation Open Data</h2>');
+            appendList('<a href="http://bit.ly/code-for-atl-open-data-workingdoc">Update the Open Data List</a> - Pulled from a Google Sheet<br><br>');
+
+            //appendList('title, category1, location, webpage:');
+            for (i = 0; i < range.values.length; i++) {
+              var row = range.values[i];
+              // Print columns A and E, which correspond to indices 0 and 4.
+              appendList('<b>' + row[3] + '</b> - <a href="' + row[7] + '">' + row[1] + '</a> - ' + row[5] + '<hr>');
+            }
+            
+          } else {
+            appendList('No data found.');
+          }
+        }, function(response) {
+          appendList('Error: ' + response.result.error.message);
+        });
+      }
+      function createHTMLNode(htmlCode, tooltip) {
+          // create html node
+          var htmlNode = document.createElement('span');
+          htmlNode.innerHTML = htmlCode
+          htmlNode.className = 'treehtml';
+          htmlNode.setAttribute('title', tooltip);
+          return htmlNode;
+      }
+      // End List of Open Data providers
+
+
+      // https://docs.google.com/spreadsheets/d/1bvD9meJgMqLywdoiGwe3f93sw1IVI_ZRjWSuCLSebZo/edit#gid=0
 
       // Load the API and make an API call.  Display the results on the screen.
       function makeApiCall() {
@@ -443,6 +489,7 @@ function handleCredentialResponse(notification) {
 
     document.getElementById('content').innerHTML = ""; // Clear existing
     listMajors();
+    listWebsites();
     makeApiCall();
 }
 function continueWithNextIdp(notification) {
