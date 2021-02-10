@@ -59,7 +59,7 @@ button:hover {
 
 <div class="content contentpadding" style="padding-top: 0px">
 
-<div id="list"></div>
+<div id="list">Log in with your Google Accout to view data from the VaccinateGA.com Google Sheet</div>
 
 <div style="float:left; border:1px solid #ccc; padding:20px; margin-right:40px; max-width:400px">
     <p><b>Quickstart Output</b> - After authorizong, clicking One-Tap will reveal your person info in the person-info div. The quickstart account can differ from the onetap account.</p>
@@ -76,19 +76,14 @@ button:hover {
 
     <pre id="content" style="white-space: pre-wrap;"></pre>
 
-
-
-
-    <h2 style="clear:both; padding-top:20px">Copied from Quickstart</h2>
-
-    <a href="../gsample">View Quickstart</a>
+    Source: <a href="../gsample">Quickstart gsample</a>
     <br><br>
 
     <div style="font-size:12px">
         Valid domains (<a href="../google/">Google Config</a>):<br>
-        https://model.earth/community/resources/google-onetap/<br>
-        https://model.georgia.org/community/resources/google-onetap/<br>
-        http://localhost:8887/community/resources/google-onetap/<br><br>
+        https://model.earth/editor/onetap/<br>
+        https://model.georgia.org/editor/onetap/<br>
+        http://localhost:8887/editor/onetap/<br><br>
     </div>
 
     <script type="text/javascript">
@@ -177,7 +172,8 @@ button:hover {
           */
           //}
           listMajors();
-          listWebsites();
+          //listWebsites();
+          listLocations();
 
           // BUGBUG - This will cause an error if the user has not already authorized Quickstart Output
           // and they then approve One-Tap
@@ -234,6 +230,8 @@ button:hover {
        * 
        */
       function listMajors() {
+        return; // Temp disabled
+
         gapi.client.sheets.spreadsheets.values.get({
           spreadsheetId: '1N8nVvIXhVeiWuxOph8Xrd-3gJTvTf2PX1n0-AAwAtpQ',
           range: 'Class Data!A2:E',
@@ -253,6 +251,79 @@ button:hover {
           appendPre('Error: ' + response.result.error.message);
         });
       }
+
+      // https://docs.google.com/spreadsheets/d/1Ovy8-OhMqmBCEnrOL0Oyq-u23Tr1jbkt/edit#gid=1218566680
+
+      // https://docs.google.com/spreadsheets/d/e/2PACX-1vSkTQuJbdL1XjSTvd2MV2xUuIZEAhDQxIdxjEEkOkzb7Q02CslWua4LtU9BPZsGLw/pubhtml
+
+      // https://drive.google.com/file/d/1Ovy8-OhMqmBCEnrOL0Oyq-u23Tr1jbkt/view?usp=sharing
+
+
+      // Tera Miller - https://www.vaccinatega.com/
+
+      // Google Sheet
+
+      // https://docs.google.com/spreadsheets/d/e/2PACX-1vTLKdLPLphOYtA9Mw2F-AkshHcmowSuR0MGhrFWJ7xJLpTeA0xI84XbYvyA0767q7zR9PorD19Ajesm/pubhtml
+
+      // https://docs.google.com/spreadsheets/d/1q5dvOEaAoTFfseZDqP_mIZOf2PhD-2fL505jeKndM88/edit?usp=sharing
+
+      function listLocations() {
+        // Currently requires Google login
+
+        gapi.client.sheets.spreadsheets.values.get({
+          spreadsheetId: '1q5dvOEaAoTFfseZDqP_mIZOf2PhD-2fL505jeKndM88',
+          range: 'Sheet3!A2:J',
+        }).then(function(response) {
+          $("#list").html("");
+          var range = response.result;
+          if (range.values.length > 0) {
+            appendList('<h2>Amended Georgia Department of Health List of Distribution Points</h2>');
+            appendList('Maintained by volunteers at <a href="https://VaccinateGA.com">VaccinateGA.com</a>.<br>');
+            appendList('<a href="https://docs.google.com/spreadsheets/d/1q5dvOEaAoTFfseZDqP_mIZOf2PhD-2fL505jeKndM88/edit?usp=sharing">Add updates to the VaccinateGA.com Google Sheet</a><br><br>');
+
+            //TO DO: Sort by county here
+            for (i = 0; i < range.values.length; i++) {
+              var row = range.values[i];
+              // Print columns A and E, which correspond to indices 0 and 4.
+              var theTitle = row[0] + ' - ' + row[1] + ' County';
+              var theTitleLink = 'https://www.google.com/maps/search/' + (row[0] + ', ' + row[1] + ' County').replace(/ /g,"+");
+              var theRow = '<b>' + (i+1) + '</b> - <a href="' + theTitleLink + '">' + theTitle + '</a>';
+              if (row[6]) {
+                theRow += ' - ' + row[6];
+              }
+              if (row[7]) {
+                theRow += '<br> &nbsp;' + linkify(row[7]);
+              }
+              theRow += '<hr>'
+              appendList(theRow);
+            }
+            
+          } else {
+            appendList('No data found.');
+          }
+        }, function(response) {
+          appendList('Error: ' + response.result.error.message);
+        });
+      }
+      function linkify(inputText) {
+        var replacedText, replacePattern1, replacePattern2, replacePattern3;
+
+        //URLs starting with http://, https://, or ftp://
+        replacePattern1 = /(\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim;
+        replacedText = inputText.replace(replacePattern1, '<a href="$1" target="_blank">$1</a>');
+
+        //URLs starting with "www." (without // before it, or it'd re-link the ones done above).
+        replacePattern2 = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
+        replacedText = replacedText.replace(replacePattern2, '$1<a href="http://$2" target="_blank">$2</a>');
+
+        //Change email addresses to mailto:: links.
+        replacePattern3 = /(([a-zA-Z0-9\-\_\.])+@[a-zA-Z\_]+?(\.[a-zA-Z]{2,6})+)/gim;
+        replacedText = replacedText.replace(replacePattern3, '<a href="mailto:$1">$1</a>');
+
+        return replacedText;
+    }
+
+      
 
       // List of Open Data providers
       function appendList(message) {
@@ -325,7 +396,6 @@ button:hover {
           document.getElementById('person-info').appendChild(p);
         });
       }
-
     </script>
 
 
@@ -489,7 +559,8 @@ function handleCredentialResponse(notification) {
 
     document.getElementById('content').innerHTML = ""; // Clear existing
     listMajors();
-    listWebsites();
+    listLocations();
+    //listWebsites();
     makeApiCall();
 }
 function continueWithNextIdp(notification) {
