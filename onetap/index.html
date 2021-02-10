@@ -284,7 +284,6 @@ button:hover {
             //TO DO: Sort by county here
             for (i = 0; i < range.values.length; i++) {
               var row = range.values[i];
-              // Print columns A and E, which correspond to indices 0 and 4.
               var theTitle = row[0] + ' - ' + row[1] + ' County';
               var theTitleLink = 'https://www.google.com/maps/search/' + (row[0] + ', ' + row[1] + ' County').replace(/ /g,"+");
               var theRow = '<b>' + (i+1) + '</b> - <a href="' + theTitleLink + '">' + theTitle + '</a>';
@@ -320,6 +319,7 @@ button:hover {
         //Change email addresses to mailto:: links.
         //replacePattern3 = /(([a-zA-Z0-9\-\_\.])+@[a-zA-Z\_]+?(\.[a-zA-Z]{2,6})+)/gim;
         //replacedText = replacedText.replace(replacePattern3, '<a href="mailto:$1">$1</a>');
+        // https://outlook.office365.com/owa/calendar/WhitfieldVaccineSchedule@gets.onmicrosoft.com/bookings/
 
         return replacedText;
     }
