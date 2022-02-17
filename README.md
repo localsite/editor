@@ -1,7 +1,7 @@
 
 # Google Sheet Editor
 
-We're working toward a process to edit rows in a [MapsForUs Google Sheet](https://model.earth/localsite/map/mapsforus) using REST/CRUD after logging into a Google account within a brower.   
+We're interested in finding a process to edit rows in a Google Sheet using REST/CRUD after logging into a Google account within a brower. Initial work toward this object resides below.  
 
 Javascript browser-frontend work resides in [Google-OneTap](onetap/).   
 
