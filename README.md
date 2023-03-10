@@ -139,7 +139,7 @@ https://console.developers.google.com/apis/credentials/domainverification?projec
 <span style="background-color: #FFFF00">
 <b>TO DO:</b> Create a CRUD/REST form based on [Real World](https://neighborhood.org/realworld) and set-up a [Real World Starter Kit](https://github.com/gothinkster/realworld-starter-kit) that also works with [Google Cloud Functions](https://medium.com/@abuango/how-to-collect-form-data-from-a-jamstack-website-to-google-sheets-using-google-cloud-functions-a59546c803a5)  
 
-<b>Proposed Frontend:</b> Either existing "Vanilla JS Web Components" ([initial tests](https://model.earth/localsite/resources/google-onetap/)) or use JQuery. 
+<b>Proposed Frontend:</b> Either existing "Vanilla JS Web Components" ([initial onetap tests](onetap)) or use JQuery. 
 
 <b>Proposed Backend for Trust Levels:</b> Either a Google API Flask connector, DJango with Discourse](https://github.com/discourse/discourse), or another Trust Level storehouse, like Google Firebase.
 </span>
